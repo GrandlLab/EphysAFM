@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+import feather
 import scipy.integrate as it
 from loadFile import *
 
@@ -48,7 +49,9 @@ def calcWork(position, force):
 
     return(work)
 
-def preprocessFile(path, headers=None, window=[50,150]):
+
+
+def preprocessFile(path, headers=None, window=[50,150], channel = "k2p"):
     
     print(path)
     dat = loadFile(path, headers=headers)
@@ -61,6 +64,7 @@ def preprocessFile(path, headers=None, window=[50,150]):
 
     ## Change scales to ms, pA, and mV for convenience
     time_cols = [col for col in dat if col.startswith('t')]
+    
     dat[time_cols] *= 1e3
     dat['i'] *= 1e12
     dat['v'] *= 1e3
@@ -91,15 +95,14 @@ def preprocessFile(path, headers=None, window=[50,150]):
         dat['position'] = positionCorrection(dat.z, dat.deflection)
         dat['work'] = calcWork(dat.position, dat.force)
 
-    dat.to_hdf(os.path.splitext(path)[0] + '_preprocessed.csv', key='df',
-                         mode='w')
+    dat.to_feather(os.path.splitext(path)[0] + '_preprocessed.feather')
 
 def preprocessDirectory(folderPath, protocol, headers, window=[50, 150]):
     """
     This function will run the preprocessFile function on all files in a folder.
     """
-
     path_list = []
+
     for root, dirs, files in os.walk(folderPath):
         for file in files:
             if file.find(protocol +'.asc') != -1:

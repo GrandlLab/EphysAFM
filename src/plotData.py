@@ -16,7 +16,7 @@ class PlotData(object):
     """
 
     def __init__(self, path):
-        self.dat = pd.read_hdf(path)
+        self.dat = pd.read_feather(path)
         self.path = path
         self.dat['position'] /= -1000
         self.params = pd.read_csv(("_").join(path.split("_")[0:-2]) + '_params.csv', header=0, index_col=0)
@@ -94,7 +94,7 @@ class PlotData(object):
                 pass
 
         plt.tight_layout()
-        plt.savefig(("_").join(self.path.split("_")[0:-1]) + '_ex-trace.jpg', dpi=300)
+        plt.savefig(("_").join(self.path.split("_")[0:-1]) + '_ex-trace_1kfilt.jpg', dpi=300)
         plt.show()
 
     def add_scalebars(self, ax, var):
@@ -226,7 +226,7 @@ class PlotData(object):
             for j in range(nrows):
                 ax = plt.Subplot(fig, inner[j])
                 ax.plot(self.plot_dat[xvals[j]], self.plot_dat[vars[j]],
-                        color=colors[j], linewidth=0.5)
+                        color=colors[j], linewidth=0.25)
                 self.plot_range = max(self.dat_sub[vars[j]]) - min(self.dat_sub[vars[j]])
                 ax.set_ylim(np.min(self.dat_sub[vars[j]]) - 0.05 * self.plot_range,
                             np.max(self.dat_sub[vars[j]]) + 0.05 * self.plot_range)
@@ -250,7 +250,7 @@ class PlotData(object):
 
         plt.tight_layout()
         print(self.path)
-        plt.savefig(("_").join(self.path.split("_")[0:-1]) + '_allsweeps.png', dpi=300)
+        plt.savefig(("_").join(self.path.split("_")[0:-1]) + '_allsweeps.png', dpi=300, facecolor="white")
         plt.show()
 
     def check_summary_data(self, ax, sweep, val):
@@ -269,14 +269,12 @@ class PlotData(object):
 
         ax.axvline(x=self.summary.loc[sweep, 'tpeaki'], color='k', linewidth=0.25)
         ax.axvline(x=self.summary.loc[sweep, 'tpeakf'], color='b', linewidth=0.25)
-        ax.axvline(x=self.dat_sub['ti'].reset_index(drop=True)
-                   [self.summary.loc[sweep, 'threshind']], color='r', linewidth=0.25)
-        ax.axhline(y=self.summary.loc[sweep, 'offset'], color='r', linewidth=0.5, linestyle='dashed')
-        ax.axhline(y=self.summary.loc[sweep, 'ss'], color='g', linewidth=0.5, linestyle='dashed')
+        ax.axvline(x=self.summary.loc[sweep, 'thresht'], color='r', linewidth=0.25)
+        ax.axhline(y=self.summary.loc[sweep, 'offset'], color='g', linewidth=0.5, linestyle='dashed')
 
         if (val == 'i_blsub') and (self.summary.loc[sweep, 'threshind'] != 0):
             ax.axhline(y=self.summary.loc[sweep, 'thresh'], color='r', linewidth=0.25)
-            ax.axhline(y=self.summary.loc[sweep, 'offset']-5*self.summary.loc[sweep, 'stdev'], color='r', linewidth=0.25)
+            ax.axhline(y=self.summary.loc[sweep, 'offset']-2*self.summary.loc[sweep, 'stdev'], color='r', linewidth=0.25)
         else:
             pass
 

@@ -12,7 +12,6 @@ def loadFile(path, headers=None):
     Returns:
     df, dfcache - two copies of the file reformatted into a dataframe.
     '''
-
     lineIndices = []            
     
     # Splits string at \n and removes trailing spaces  
@@ -30,7 +29,6 @@ def loadFile(path, headers=None):
     processedFile = [rawFile[i].strip().replace(" ", "").split(",") for i in lineIndices]     
 
     # Use the difference in file size with and without headers to find nSweeps
-    nSweeps = int((len(rawFile)-len(processedFile)-1)/2)   
 
     if headers == None:
          df = pd.DataFrame(data=processedFile)
@@ -38,7 +36,9 @@ def loadFile(path, headers=None):
         df = pd.DataFrame(columns=headers, data=processedFile)
     df = df.apply(pd.to_numeric)
     df = df.dropna(axis=0)
+    
+    nSweeps = df['index'].tolist().count(0) 
 
     # Make new column with sweep identity
-    df['sweep'] = np.repeat(np.arange(nSweeps) + 1, len(df)/nSweeps)
+    df['sweep'] = np.repeat(np.arange(nSweeps) + 1, len(df)/(df['index'].tolist().count(1)))
     return df.reset_index(drop=True)
