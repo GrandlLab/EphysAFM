@@ -52,7 +52,6 @@ def calcWork(position, force):
 
 
 def preprocessFile(path, headers=None, window=[50,150], channel = "k2p"):
-    
     print(path)
     dat = loadFile(path, headers=headers)
     sensitivityDat = pd.read_csv(("_").join(path.split("_", -1)[0:-1]) + '_sensitivity.csv', header=None)

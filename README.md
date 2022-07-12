@@ -30,7 +30,7 @@ conda activate ephysafm
 Descriptions of individual functions can be found in the different modules `loadFile.py`,`plotData.py`, `preprocess.py`, and `summarize.py`.  
 
 ## Contributing
-To contribute to **sader_calibration**, follow these steps:
+To contribute to **EphysAFM**, follow these steps:
 
 1. Fork this repository.
 2. Create a branch: git checkout -b *branch_name*.
